@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>搭子匹配墙 - 首页</title>
+  <link rel="stylesheet" href="assets/styles/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <h1>🤝 搭子匹配墙</h1>
+    </div>
+    <nav class="header-nav">
+      <a href="home.html" class="nav-link active">首页</a>
+      <a href="post.html" class="nav-link">发布活动</a>
+      <a href="profile.html" class="nav-link">个人中心</a>
+    </nav>
+    <div class="header-right">
+      <button class="btn logout-btn" id="logoutBtn">退出登录</button>
+    </div>
+  </header>
+
+  <main class="home-main">
+    <section class="swiper-section">
+      <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="slide-content slide-1">
+              <h2>🎯 找到你的学习搭子</h2>
+              <p>一起进步，共同成长</p>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="slide-content slide-2">
+              <h2>🍜 饭搭子一起吃</h2>
+              <p>美食分享，快乐加倍</p>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="slide-content slide-3">
+              <h2>🏃 运动搭子</h2>
+              <p>健康生活，活力无限</p>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+    </section>
+
+    <section class="api-content">
+      <h2 class="section-title">💝 每日一句</h2>
+      <div class="love-quote" id="loveQuote">
+        <p>加载中...</p>
+      </div>
+    </section>
+
+    <section class="main-container">
+      <aside class="sidebar">
+        <h2>📋 我发布的帖子</h2>
+        <div id="myPosts"></div>
+      </aside>
+
+      <section class="content">
+        <h2>🎯 可申请的搭子活动</h2>
+        <button class="btn new-post-btn" id="newPostBtn">✨ 发布新搭子</button>
+        <div id="availablePosts"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2026 搭子匹配墙 | Web 前端课程作业</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <script src="components/posts.js"></script>
+  <script>
+    // 初始化Swiper
+    const swiper = new Swiper('.mySwiper', {
+      loop: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+
+    // 绑定导航按钮事件
+    document.getElementById('newPostBtn').addEventListener('click', () => {
+      window.location.href = 'post.html';
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('确定要退出登录吗？')) {
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('lastMatch');
+        window.location.href = 'index.html';
+      }
+    });
+
+    // 备用名言数据（当API失败时使用）
+    const backupQuotes = [
+      "生活不是等待风暴过去，而是学会在雨中翩翩起舞。",
+      "成功不是将来才有的，而是从决定去做的那一刻起，持续累积而成。",
+      "人生最大的挑战是发现自己是谁，而第二大的挑战是对所发现的感到满意。",
+      "把每一天都当作生命中的最后一天来对待。",
+      "只有那些敢于相信自己内心深处的力量，并愿意为之奋斗的人，才能改变世界。",
+      "不要等待机会，而要创造机会。",
+      "成功的秘诀在于始终如一地坚持目标。",
+      "你的时间有限，不要浪费在重复别人的生活上。"
+    ];
+
+    // 获取随机备用名言
+    function getRandomQuote() {
+      const randomIndex = Math.floor(Math.random() * backupQuotes.length);
+      return backupQuotes[randomIndex];
+    }
+
+    // Fetch API获取每日一句
+    async function fetchLoveQuote() {
+      try {
+        const response = await fetch('https://api.vvhan.com/api/text/love');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP错误: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data && data.text) {
+          document.getElementById('loveQuote').innerHTML = `
+            <p class="quote-text">"${escapeHtml(data.text)}"</p>
+            <p class="quote-time">更新时间：${new Date().toLocaleString('zh-CN')}</p>
+          `;
+        } else {
+          throw new Error('数据格式错误');
+        }
+      } catch (error) {
+        console.warn('获取每日一句失败，使用本地数据:', error);
+        // 使用备用名言
+        const quote = getRandomQuote();
+        document.getElementById('loveQuote').innerHTML = `
+          <p class="quote-text">"${escapeHtml(quote)}"</p>
+          <p class="quote-time">每日精选</p>
+        `;
+      }
+    }
+
+    // XSS防护
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // 页面加载时获取数据
+    fetchLoveQuote();
+  </script>
+</body>
+</html>

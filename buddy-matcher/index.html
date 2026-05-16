@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>搭子匹配墙 - 登录</title>
+  <link rel="stylesheet" href="assets/styles/style.css">
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="floating-icon icon-1">🎯</div>
+    <div class="floating-icon icon-2">🎮</div>
+    <div class="floating-icon icon-3">📚</div>
+    <div class="floating-icon icon-4">🏃</div>
+    <div class="floating-icon icon-5">☕</div>
+    
+    <div class="login-container">
+      <div class="login-header">
+        <div class="logo">🤝</div>
+        <h1 id="formTitle">搭子匹配墙</h1>
+        <p class="subtitle">找到志同道合的伙伴</p>
+      </div>
+      
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="studentId">
+            <span class="label-icon">🎓</span>
+            学号
+          </label>
+          <input type="text" id="studentId" placeholder="请输入10位学号" maxlength="10">
+        </div>
+        
+        <div class="form-group" id="nameGroup" style="display: none;">
+          <label for="name">
+            <span class="label-icon">👤</span>
+            姓名
+          </label>
+          <input type="text" id="name" placeholder="请输入姓名" maxlength="20">
+        </div>
+        
+        <div class="form-group" id="classNameGroup" style="display: none;">
+          <label for="className">
+            <span class="label-icon">🏫</span>
+            班级
+          </label>
+          <input type="text" id="className" placeholder="请输入班级" maxlength="30">
+        </div>
+        
+        <div class="form-group" id="majorGroup" style="display: none;">
+          <label for="major">
+            <span class="label-icon">📖</span>
+            专业
+          </label>
+          <input type="text" id="major" placeholder="请输入专业" maxlength="30">
+        </div>
+        
+        <div class="form-group">
+          <label for="password">
+            <span class="label-icon">🔒</span>
+            密码
+          </label>
+          <input type="password" id="password" placeholder="请输入密码" maxlength="20">
+        </div>
+        
+        <div class="form-group" id="confirmPasswordGroup" style="display: none;">
+          <label for="confirmPassword">
+            <span class="label-icon">🔐</span>
+            确认密码
+          </label>
+          <input type="password" id="confirmPassword" placeholder="请再次输入密码" maxlength="20">
+        </div>
+        
+        <button type="submit" class="btn login-btn" id="submitBtn">
+          <span class="btn-icon">🚀</span>
+          登录
+        </button>
+        
+        <button type="button" class="btn" id="toggleModeBtn" style="background: transparent; color: #667eea; margin-top: 10px;">
+          没有账号？去注册
+        </button>
+      </form>
+    </div>
+  </div>
+  
+  <script src="components/login.js"></script>
+</body>
+</html>

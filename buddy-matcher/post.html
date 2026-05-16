@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>发布活动 - 搭子匹配墙</title>
+  <link rel="stylesheet" href="assets/styles/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <h1>🤝 搭子匹配墙</h1>
+    </div>
+    <nav class="header-nav">
+      <a href="home.html" class="nav-link">首页</a>
+      <a href="post.html" class="nav-link active">发布活动</a>
+      <a href="profile.html" class="nav-link">个人中心</a>
+    </nav>
+    <div class="header-right">
+      <button class="btn logout-btn" id="logoutBtn">退出登录</button>
+    </div>
+  </header>
+
+  <main class="post-wrapper">
+    <section class="post-container">
+      <form id="postForm" class="post-form">
+        <section class="form-section">
+          <h2>📝 活动信息</h2>
+          
+          <div class="form-group">
+            <label for="postTitle">
+              <span class="label-icon">📌</span>
+              活动标题
+            </label>
+            <input type="text" id="postTitle" placeholder="请输入活动标题（最多50字）" maxlength="50">
+          </div>
+
+          <div class="form-group">
+            <label for="postCategory">
+              <span class="label-icon">🏷️</span>
+              活动类型
+            </label>
+            <select id="postCategory">
+              <option value="">请选择活动类型</option>
+              <option value="学习">📚 学习</option>
+              <option value="饭搭子">🍜 饭搭子</option>
+              <option value="运动">🏃 运动</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="postLocation">
+              <span class="label-icon">📍</span>
+              活动地点
+            </label>
+            <input type="text" id="postLocation" placeholder="请输入活动地点（最多50字）" maxlength="50">
+          </div>
+
+          <div class="form-group">
+            <label for="postDate">
+              <span class="label-icon">📅</span>
+              活动时间
+            </label>
+            <input type="datetime-local" id="postDate">
+          </div>
+
+          <div class="form-group">
+            <label for="postDesc">
+              <span class="label-icon">💬</span>
+              活动描述
+            </label>
+            <textarea id="postDesc" placeholder="请描述活动详情，让更多人了解..." rows="4"></textarea>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <button type="button" class="btn cancel-btn" id="cancelBtn">取消</button>
+          <button type="submit" class="btn submit-btn">发布</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2026 搭子匹配墙 | Web 前端课程作业</p>
+    </div>
+  </footer>
+
+  <script src="components/posts.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const cancelBtn = document.getElementById('cancelBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+          if (confirm('确定要取消发布吗？')) {
+            window.location.href = 'home.html';
+          }
+        });
+      }
+      
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          if (confirm('确定要退出登录吗？')) {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('lastMatch');
+            window.location.replace('index.html');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人中心 - 搭子匹配墙</title>
+  <link rel="stylesheet" href="assets/styles/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <h1>🤝 搭子匹配墙</h1>
+    </div>
+    <nav class="header-nav">
+      <a href="home.html" class="nav-link">首页</a>
+      <a href="post.html" class="nav-link">发布活动</a>
+      <a href="profile.html" class="nav-link active">个人中心</a>
+    </nav>
+    <div class="header-right">
+      <button class="btn logout-btn" id="logoutBtn">退出登录</button>
+    </div>
+  </header>
+
+  <main class="profile-wrapper">
+    <section class="profile-container">
+      <div class="profile-header">
+        <div class="avatar">👤</div>
+        <div class="profile-basic">
+          <h2 id="profileNameDetail">加载中...</h2>
+          <p class="profile-info" id="profileClassDetail">加载中...</p>
+        </div>
+      </div>
+
+      <div class="profile-details">
+        <article class="detail-card">
+          <h3>📊 统计数据</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-number" id="myPostsCount">0</div>
+              <div class="stat-label">发布的帖子</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="myApplicationsCount">0</div>
+              <div class="stat-label">申请次数</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="matchedCount">0</div>
+              <div class="stat-label">成功匹配</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="detail-card">
+          <h3>📈 活动分类统计</h3>
+          <div id="categoryChart" style="width: 100%; height: 400px;"></div>
+        </article>
+
+        <article class="detail-card">
+          <h3>📋 个人信息</h3>
+          <div class="detail-item">
+            <span class="detail-label">姓名</span>
+            <span class="detail-value" id="profileName">加载中...</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">学号</span>
+            <span class="detail-value" id="profileStudentId">加载中...</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">班级</span>
+            <span class="detail-value" id="profileClass">加载中...</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">专业</span>
+            <span class="detail-value" id="profileMajor">加载中...</span>
+          </div>
+        </article>
+
+        <article class="detail-card">
+          <h3>📝 我的申请记录</h3>
+          <div class="applications-list" id="myApplications">
+            <p class="empty-tip">加载中...</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2026 搭子匹配墙 | Web 前端课程作业</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script src="components/applications.js"></script>
+  <script>
+    // XSS防护
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const logoutBtn = document.getElementById('logoutBtn');
+      
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          if (confirm('确定要退出登录吗？')) {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('lastMatch');
+            window.location.replace('index.html');
+          }
+        });
+      }
+      
+      initCategoryChart();
+    });
+
+    function initCategoryChart() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!currentUser) return;
+
+      const posts = JSON.parse(localStorage.getItem('posts')) || [];
+      const myPosts = posts.filter(p => p.author && p.author.studentId === currentUser.studentId);
+
+      const categoryStats = {
+        '学习': 0,
+        '饭搭子': 0,
+        '运动': 0
+      };
+      
+      myPosts.forEach(post => {
+        const category = post.category || '其他';
+        if (categoryStats.hasOwnProperty(category)) {
+          categoryStats[category]++;
+        }
+      });
+
+      const chartData = [
+        { name: '学习', value: categoryStats['学习'] },
+        { name: '饭搭子', value: categoryStats['饭搭子'] },
+        { name: '运动', value: categoryStats['运动'] }
+      ];
+
+      const chartDom = document.getElementById('categoryChart');
+      if (!chartDom) return;
+
+      const myChart = echarts.init(chartDom);
+      
+      const option = {
+        title: {
+          text: '活动分类分布',
+          left: 'center',
+          top: 10,
+          textStyle: {
+            fontSize: 16,
+            color: '#333'
+          }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: {c} ({d}%)'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+          top: 'middle'
+        },
+        series: [
+          {
+            name: '活动分类',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: 20,
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: chartData
+          }
+        ],
+        color: ['#4A90E2', '#F5A623', '#D0021B']
+      };
+
+      myChart.setOption(option);
+
+      window.addEventListener('resize', () => {
+        myChart.resize();
+      });
+    }
+  </script>
+</body>
+</html>

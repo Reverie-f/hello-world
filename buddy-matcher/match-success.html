@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>匹配成功 - 搭子匹配墙</title>
+  <link rel="stylesheet" href="assets/styles/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <h1>🤝 搭子匹配墙</h1>
+    </div>
+    <nav class="header-nav">
+      <a href="home.html" class="nav-link">首页</a>
+      <a href="post.html" class="nav-link">发布活动</a>
+      <a href="profile.html" class="nav-link">个人中心</a>
+    </nav>
+    <div class="header-right">
+      <button class="btn logout-btn" id="logoutBtn">退出登录</button>
+    </div>
+  </header>
+
+  <main class="success-wrapper">
+    <section class="success-container">
+      <div class="success-icon">🎉</div>
+      <h1>匹配成功！</h1>
+      <p class="success-message">恭喜你找到了志同道合的搭子！</p>
+      
+      <div class="match-info">
+        <article class="info-card">
+          <h3>📋 活动信息</h3>
+          <div class="info-item">
+            <span class="label">活动标题</span>
+            <span class="value" id="matchPostTitle">加载中...</span>
+          </div>
+          <div class="info-item">
+            <span class="label">活动类型</span>
+            <span class="value" id="matchPostCategory">加载中...</span>
+          </div>
+          <div class="info-item">
+            <span class="label">地点</span>
+            <span class="value" id="matchPostLocation">加载中...</span>
+          </div>
+          <div class="info-item">
+            <span class="label">时间</span>
+            <span class="value" id="matchPostTime">加载中...</span>
+          </div>
+        </article>
+
+        <article class="info-card">
+          <h3>👤 搭子信息</h3>
+          <div class="info-item">
+            <span class="label">姓名</span>
+            <span class="value" id="matchUserName">加载中...</span>
+          </div>
+          <div class="info-item">
+            <span class="label">班级</span>
+            <span class="value" id="matchUserClass">加载中...</span>
+          </div>
+          <div class="info-item">
+            <span class="label">专业</span>
+            <span class="value" id="matchUserMajor">加载中...</span>
+          </div>
+          <div class="info-item">
+            <span class="label">学号</span>
+            <span class="value" id="matchUserStudentId">加载中...</span>
+          </div>
+        </article>
+      </div>
+
+      <button class="btn success-btn" id="goHomeBtn">返回首页</button>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2026 搭子匹配墙 | Web 前端课程作业</p>
+    </div>
+  </footer>
+
+  <script src="components/match.js"></script>
+  <script>
+    // XSS防护
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const goHomeBtn = document.getElementById('goHomeBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      
+      if (goHomeBtn) {
+        goHomeBtn.addEventListener('click', () => {
+          window.location.href = 'home.html';
+        });
+      }
+      
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          if (confirm('确定要退出登录吗？')) {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('lastMatch');
+            window.location.replace('index.html');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
